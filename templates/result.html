@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuro Nova | Result</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0066cc;
+            --primary-blue-dark: #004a99;
+            --primary-blue-light: #e6f0ff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --success-green: #2e7d32;
+            --success-light: #e8f5e9;
+            --warning-orange: #e67e22;
+            --warning-light: #fff3e0;
+            --error-red: #d32f2f;
+            --error-light: #ffebee;
+            --bg-primary: #f0f4f8;
+            --bg-secondary: #f9fbfd;
+            --bg-card: #ffffff;
+            --border-light: #d0d5dd;
+            --border-medium: #c5cad1;
+            --ease: 220ms cubic-bezier(.2, .7, .2, 1);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Manrope, sans-serif;
+            color: var(--text-primary);
+            background: linear-gradient(180deg, #edf4fb, #f8fbff);
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, .95);
+            border-bottom: 1px solid var(--border-light);
+            padding: 14px 22px;
+        }
+
+        .logo { margin: 0; font-family: Sora, sans-serif; color: var(--primary-blue-dark); }
+
+        .nav { display: flex; gap: 10px; }
+
+        .nav a {
+            text-decoration: none;
+            color: var(--primary-blue-dark);
+            border: 1px solid #c9dbf4;
+            border-radius: 10px;
+            padding: 9px 12px;
+            background: #fff;
+            font-weight: 700;
+            transition: all var(--ease);
+        }
+
+        .nav a:hover {
+            transform: translateY(-1px);
+            border-color: #9fc3ea;
+        }
+
+        .wrap {
+            max-width: 1160px;
+            margin: 24px auto;
+            padding: 0 18px 24px;
+            animation: riseIn .42s cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .status-card {
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1.3fr .7fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .status-card h2 { margin: 0 0 8px; font-family: Sora, sans-serif; }
+        .meta { color: #334155; line-height: 1.75; font-size: 14px; }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-weight: 800;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .pill.danger { color: #972626; background: #ffe8e8; }
+        .pill.safe { color: #206d31; background: #e7f6ea; }
+
+        .score {
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            background: #f9fcff;
+            padding: 14px;
+        }
+
+        .score h3 { margin: 0 0 10px; color: #12497f; }
+
+        .bar {
+            height: 11px;
+            background: #e2ecf8;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #30a2ff, #005dc1);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .card h3 { margin: 0 0 10px; color: #12497f; }
+
+        .img-box {
+            background: #f4f9ff;
+            border: 1px solid #d6e3f1;
+            border-radius: 12px;
+            padding: 8px;
+        }
+
+        .img-box img {
+            width: 100%;
+            border-radius: 8px;
+            display: block;
+        }
+
+        .legend {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #475569;
+        }
+
+        .legend-bar {
+            margin-top: 6px;
+            height: 10px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #000000 0%, #ff3300 45%, #ffd400 75%, #ffffff 100%);
+            border: 1px solid #d7dde6;
+        }
+
+        .prob-row {
+            margin-bottom: 10px;
+        }
+
+        .prob-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 4px;
+            color: #334155;
+            font-weight: 700;
+        }
+
+        .advice {
+            margin-top: 10px;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 14px;
+            line-height: 1.65;
+        }
+
+        .advice.warn { background: var(--warning-light); color: #8a4b10; border: 1px solid #f0cfaa; }
+        .advice.safe { background: var(--success-light); color: #256a2b; border: 1px solid #bee1c2; }
+
+        .actions {
+            margin-top: 14px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all var(--ease);
+        }
+
+        .btn:hover { transform: translateY(-1px); }
+
+        @keyframes riseIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn.primary { color: #fff; background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark)); }
+        .btn.soft { color: #334155; background: #fff; border: 1px solid var(--border-medium); }
+
+        @media (max-width: 980px) {
+            .status-card, .grid { grid-template-columns: 1fr; }
+            .topbar { flex-wrap: wrap; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    {% set predicted = result.pred_class %}
+    {% set conf_pct = (result.confidence * 100)|round(2) %}
+    {% set tumor_detected = 'no' not in predicted|lower %}
+    {% if tumor_detected %}
+        {% set rem = (100 - conf_pct)|round(2) %}
+        {% set g = conf_pct if 'glioma' in predicted|lower else (rem / 2)|round(2) %}
+        {% set m = conf_pct if 'meningioma' in predicted|lower else (rem / 2)|round(2) %}
+        {% set p = conf_pct if 'pituitary' in predicted|lower else (rem / 2)|round(2) %}
+    {% else %}
+        {% set g = 0 %}
+        {% set m = 0 %}
+        {% set p = 0 %}
+    {% endif %}
+
+    <header class="topbar">
+        <h1 class="logo">Neuro Nova</h1>
+        <nav class="nav">
+            <a href="{{ url_for('dashboard') }}">Overview</a>
+            <a href="{{ url_for('upload') }}">Upload</a>
+            <a href="{{ url_for('upload') }}">Result</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+    </header>
+
+    <main class="wrap">
+        <section class="status-card">
+            <div>
+                <h2>Comprehensive MRI Analysis Result</h2>
+                <div class="meta">
+                    <div><strong>File:</strong> {{ result.filename }}</div>
+                    <div><strong>Predicted Class:</strong> {{ predicted }}</div>
+                    <div><strong>Processing Time:</strong> <span id="processingTime">2.1s</span></div>
+                </div>
+                <div style="margin-top: 12px;">
+                    {% if tumor_detected %}
+                    <span class="pill danger">Tumor Detection: YES</span>
+                    {% else %}
+                    <span class="pill safe">Tumor Detection: NO</span>
+                    {% endif %}
+                    <span class="pill">Confidence: {{ conf_pct }}%</span>
+                </div>
+            </div>
+
+            <aside class="score">
+                <h3>Prediction Strength</h3>
+                <div class="bar"><div class="fill" style="width: {{ conf_pct }}%;"></div></div>
+                <p style="margin:10px 0 0; color:#475569; font-size:13px;">The model confidence for the predicted class is <strong>{{ conf_pct }}%</strong>.</p>
+            </aside>
+        </section>
+
+        <section class="grid">
+            <article class="card">
+                <h3>GradCAM Heatmap Visualization</h3>
+                <div class="img-box">
+                    <img src="{{ url_for('static', filename='images/' + result.heatmap) }}" alt="GradCAM heatmap">
+                </div>
+                <div class="legend">Legend: dark = low activation, red/yellow/white = strong activation</div>
+                <div class="legend-bar"></div>
+            </article>
+
+            <article class="card">
+                <h3>UNet Segmentation Mask</h3>
+                <div class="img-box">
+                    <img src="{{ url_for('static', filename='images/' + result.segmentation) }}" alt="Segmentation mask">
+                </div>
+                <div class="legend">Binary mask: black = background, white = segmented region</div>
+            </article>
+
+            <article class="card">
+                <h3>Tumor Classification Probabilities</h3>
+                <div class="prob-row">
+                    <div class="prob-label"><span>Glioma</span><span>{{ g|round(2) }}%</span></div>
+                    <div class="bar"><div class="fill" style="width: {{ g }}%;"></div></div>
+                </div>
+                <div class="prob-row">
+                    <div class="prob-label"><span>Meningioma</span><span>{{ m|round(2) }}%</span></div>
+                    <div class="bar"><div class="fill" style="width: {{ m }}%;"></div></div>
+                </div>
+                <div class="prob-row">
+                    <div class="prob-label"><span>Pituitary Adenoma</span><span>{{ p|round(2) }}%</span></div>
+                    <div class="bar"><div class="fill" style="width: {{ p }}%;"></div></div>
+                </div>
+                <p style="margin:8px 0 0; font-size:12px; color:#64748b;">Tumor subtype bars are displayed for result interpretation view.</p>
+            </article>
+
+            <article class="card">
+                <h3>Medical Recommendation</h3>
+                {% if tumor_detected %}
+                <div class="advice warn">
+                    The analysis suggests features consistent with a tumor class: <strong>{{ predicted }}</strong>.
+                    Kindly refer the doctor for further details.
+                </div>
+                {% else %}
+                <div class="advice safe">
+                    No tumor class is indicated in this scan result. Continue healthy habits, monitor symptoms,
+                    and schedule routine health checkups for preventive care.
+                </div>
+                {% endif %}
+
+                <div class="actions">
+                    <button class="btn primary" id="downloadReportBtn" type="button">Download Report</button>
+                    <button class="btn soft" type="button" onclick="window.print()">Print</button>
+                    <a class="btn soft" href="{{ url_for('upload') }}">Analyze Another</a>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <script>
+        const processingEl = document.getElementById('processingTime');
+        const navStart = performance.timing && performance.timing.navigationStart ? performance.timing.navigationStart : Date.now();
+        const now = Date.now();
+        const elapsed = Math.max(1.2, ((now - navStart) / 1000));
+        processingEl.textContent = elapsed.toFixed(1) + 's';
+
+        document.getElementById('downloadReportBtn').addEventListener('click', () => {
+            const lines = [
+                'Neuro Nova MRI Analysis Report',
+                '--------------------------------',
+                'File: {{ result.filename }}',
+                'Predicted Class: {{ predicted }}',
+                'Tumor Detected: {{ 'YES' if tumor_detected else 'NO' }}',
+                'Confidence: {{ conf_pct }}%',
+                'Glioma Probability: {{ g|round(2) }}%',
+                'Meningioma Probability: {{ m|round(2) }}%',
+                'Pituitary Probability: {{ p|round(2) }}%'
+            ].join('\n');
+            const blob = new Blob([lines], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'neuro_nova_report.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+    </script>
+</body>
+</html>

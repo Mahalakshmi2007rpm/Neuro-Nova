@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuro Nova | Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0066cc;
+            --primary-blue-dark: #004a99;
+            --primary-blue-light: #e6f0ff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --success-green: #2e7d32;
+            --success-light: #e8f5e9;
+            --warning-orange: #e67e22;
+            --warning-light: #fff3e0;
+            --error-red: #d32f2f;
+            --error-light: #ffebee;
+            --bg-primary: #f0f4f8;
+            --bg-secondary: #f9fbfd;
+            --bg-card: #ffffff;
+            --border-light: #d0d5dd;
+            --border-medium: #c5cad1;
+            --ease: 220ms cubic-bezier(.2, .7, .2, 1);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: Manrope, sans-serif;
+            color: var(--text-primary);
+            background: linear-gradient(180deg, #edf4fb 0%, #f7fbff 100%);
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 22px;
+        }
+
+        .logo {
+            font-family: Sora, sans-serif;
+            font-size: 23px;
+            color: var(--primary-blue-dark);
+            margin: 0;
+        }
+
+        .nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: var(--primary-blue-dark);
+            font-weight: 700;
+            border: 1px solid #c9dbf4;
+            background: #fff;
+            border-radius: 10px;
+            padding: 9px 12px;
+            transition: all var(--ease);
+        }
+
+        .nav a:hover {
+            transform: translateY(-1px);
+            border-color: #9fc3ea;
+        }
+
+        .profile {
+            position: relative;
+        }
+
+        .profile summary {
+            list-style: none;
+            cursor: pointer;
+            border: 1px solid var(--border-light);
+            border-radius: 999px;
+            background: #fff;
+            padding: 8px 12px;
+            font-weight: 700;
+        }
+
+        .profile-menu {
+            position: absolute;
+            right: 0;
+            top: 44px;
+            width: 210px;
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 14px 30px rgba(0, 36, 72, .12);
+        }
+
+        .profile-menu p {
+            margin: 6px 0 10px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .logout {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 800;
+            color: #fff;
+            background: linear-gradient(135deg, #cd2f2f, #b51f1f);
+            border-radius: 9px;
+            padding: 9px;
+        }
+
+        .container {
+            max-width: 1160px;
+            margin: 28px auto;
+            padding: 0 18px 30px;
+            animation: riseIn .42s cubic-bezier(.2, .8, .2, 1);
+        }
+
+        .hero {
+            border-radius: 18px;
+            background: linear-gradient(135deg, #005ab4, #0f75d9);
+            color: #fff;
+            padding: 30px;
+            margin-bottom: 18px;
+        }
+
+        .hero h2 {
+            margin: 0 0 10px;
+            font-family: Sora, sans-serif;
+        }
+
+        .hero p { margin: 0; line-height: 1.7; max-width: 76ch; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 18px;
+        }
+
+        .card h3 {
+            margin: 0 0 8px;
+            color: var(--primary-blue-dark);
+            font-size: 18px;
+        }
+
+        .card p { margin: 0; line-height: 1.72; color: #243142; }
+
+        .tumor-grid {
+            margin-top: 16px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .tag {
+            margin: 0 0 8px;
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 800;
+            color: #0b4c8f;
+            background: #deebfb;
+            border-radius: 999px;
+            padding: 4px 10px;
+        }
+
+        .cta-row {
+            margin-top: 16px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            text-decoration: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-weight: 800;
+            transition: all var(--ease);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        @keyframes riseIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn.primary { color: #fff; background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark)); }
+        .btn.soft { color: var(--primary-blue-dark); background: var(--primary-blue-light); border: 1px solid #cde1fb; }
+
+        @media (max-width: 1000px) {
+            .grid { grid-template-columns: 1fr; }
+            .tumor-grid { grid-template-columns: 1fr; }
+            .topbar { flex-wrap: wrap; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <h1 class="logo">Neuro Nova</h1>
+        <nav class="nav" aria-label="Primary">
+            <a href="#overview">Overview</a>
+            <a href="{{ url_for('upload') }}">Upload</a>
+            <a href="{{ url_for('upload') }}">Result</a>
+        </nav>
+        <details class="profile">
+            <summary>{{ username or session.get('username', 'User') }}</summary>
+            <div class="profile-menu">
+                <p>Signed in as <strong>{{ username or session.get('username', 'User') }}</strong></p>
+                <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </details>
+    </header>
+
+    <main class="container" id="overview">
+        <section class="hero">
+            <h2>Overview: Brain Tumor Knowledge Hub</h2>
+            <p>Use this section as an educational reference before analysis. It summarizes key medical context so users can interpret AI outputs responsibly and seek clinical guidance when needed.</p>
+            <div class="cta-row">
+                <a class="btn primary" href="{{ url_for('upload') }}">Go to Upload</a>
+                <a class="btn soft" href="{{ url_for('upload') }}">View Result Flow</a>
+            </div>
+        </section>
+
+        <section class="grid">
+            <article class="card">
+                <h3>What Is Brain Tumor?</h3>
+                <p>A brain tumor is an abnormal growth of cells within or around brain tissues. Tumors may be benign or malignant and can affect cognition, vision, movement, memory, and hormonal control depending on location and growth pattern. Early detection supports timely treatment planning.</p>
+            </article>
+
+            <article class="card">
+                <h3>Common Causes</h3>
+                <p>Most tumors have multifactorial causes that may include genetic mutations, inherited syndromes, prior radiation exposure, and environmental risk factors. In many patients, no single identifiable cause is confirmed, which is why screening awareness matters.</p>
+            </article>
+
+            <article class="card">
+                <h3>Warning Signs</h3>
+                <p>Persistent headaches, vomiting, seizures, visual disturbances, imbalance, personality changes, and progressive weakness can indicate neurological concern. Symptoms vary by tumor size and region; new persistent symptoms should be medically evaluated.</p>
+            </article>
+
+            <article class="card">
+                <h3>Prevention Tips</h3>
+                <p>No guaranteed prevention exists, but risk reduction includes avoiding unnecessary radiation exposure, maintaining healthy lifestyle habits, controlling chronic conditions, and attending regular medical checkups when risk history is present.</p>
+            </article>
+        </section>
+
+        <section class="tumor-grid" aria-label="Tumor Classification">
+            <article class="card">
+                <span class="tag">Classification</span>
+                <h3>Glioma</h3>
+                <p>Gliomas originate from glial cells and can range from low-grade to high-grade forms. Depending on subtype and grade, treatment may include surgery, radiotherapy, chemotherapy, or multimodal management.</p>
+            </article>
+
+            <article class="card">
+                <span class="tag">Classification</span>
+                <h3>Meningioma</h3>
+                <p>Meningiomas arise from meningeal tissue covering the brain and spinal cord. Many are slow-growing and benign, but size and location can still produce substantial neurological symptoms requiring intervention.</p>
+            </article>
+
+            <article class="card">
+                <span class="tag">Classification</span>
+                <h3>Pituitary Tumor</h3>
+                <p>Pituitary tumors develop near the pituitary gland and may alter hormone production. Clinical effects can include headache, visual field deficits, and endocrine imbalance requiring focused evaluation.</p>
+            </article>
+        </section>
+    </main>
+</body>
+</html>

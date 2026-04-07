@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuro Nova | Upload MRI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0066cc;
+            --primary-blue-dark: #004a99;
+            --primary-blue-light: #e6f0ff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --success-green: #2e7d32;
+            --success-light: #e8f5e9;
+            --warning-orange: #e67e22;
+            --warning-light: #fff3e0;
+            --error-red: #d32f2f;
+            --error-light: #ffebee;
+            --bg-primary: #f0f4f8;
+            --bg-secondary: #f9fbfd;
+            --bg-card: #ffffff;
+            --border-light: #d0d5dd;
+            --border-medium: #c5cad1;
+            --ease: 220ms cubic-bezier(.2, .7, .2, 1);
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Manrope, sans-serif;
+            background: linear-gradient(180deg, #edf4fb, #f7fbff);
+            color: var(--text-primary);
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 22px;
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .logo { margin: 0; font-family: Sora, sans-serif; color: var(--primary-blue-dark); }
+
+        .nav { display: flex; gap: 10px; }
+
+        .nav a {
+            text-decoration: none;
+            color: var(--primary-blue-dark);
+            background: #fff;
+            border: 1px solid #c9dbf4;
+            border-radius: 10px;
+            padding: 9px 12px;
+            font-weight: 700;
+            transition: all var(--ease);
+        }
+
+        .nav a:hover {
+            transform: translateY(-1px);
+            border-color: #9fc3ea;
+        }
+
+        .container {
+            min-height: calc(100vh - 74px);
+            display: grid;
+            place-items: center;
+            padding: 24px;
+        }
+
+        .card {
+            width: min(860px, 100%);
+            background: #fff;
+            border: 1px solid var(--border-light);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 18px 38px rgba(0, 34, 68, 0.11);
+            animation: riseIn .42s cubic-bezier(.2, .8, .2, 1);
+        }
+
+        h2 {
+            margin: 0 0 6px;
+            font-family: Sora, sans-serif;
+            color: var(--primary-blue-dark);
+        }
+
+        .sub { margin: 0 0 18px; color: var(--text-secondary); }
+
+        .dropzone {
+            border: 2px dashed #9dc0e5;
+            background: linear-gradient(180deg, #f7fbff, #edf5ff);
+            border-radius: 14px;
+            padding: 28px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--ease);
+        }
+
+        .dropzone.dragover {
+            border-color: var(--primary-blue);
+            background: #e8f2ff;
+            transform: scale(1.005);
+        }
+
+        .drop-title { margin: 8px 0 5px; font-size: 20px; font-weight: 800; color: #0a417d; }
+        .drop-copy { margin: 0; color: var(--text-secondary); }
+        .formats { margin-top: 8px; font-size: 13px; color: var(--text-tertiary); }
+
+        #fileInput { display: none; }
+
+        .layout {
+            margin-top: 16px;
+            display: grid;
+            grid-template-columns: 1.2fr .8fr;
+            gap: 14px;
+        }
+
+        .panel {
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px;
+            background: #fff;
+        }
+
+        .panel h3 { margin: 4px 0 10px; color: #12497f; font-size: 16px; }
+
+        .preview {
+            width: 100%;
+            aspect-ratio: 1.35/1;
+            object-fit: contain;
+            background: #f8fbff;
+            border: 1px solid #d7e3f0;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .file-meta { font-size: 13px; color: #334155; line-height: 1.65; }
+
+        .checklist { margin: 0; padding-left: 18px; color: #334155; line-height: 1.7; font-size: 14px; }
+
+        .progress-wrap {
+            margin-top: 14px;
+            background: #e7eef7;
+            border-radius: 999px;
+            overflow: hidden;
+            height: 10px;
+        }
+
+        .progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #36a2ff, #005fc2);
+            transition: width .2s linear;
+        }
+
+        .status {
+            margin-top: 10px;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 13px;
+            display: none;
+        }
+
+        .status.error { display: block; color: var(--error-red); background: var(--error-light); border: 1px solid #f5c2c8; }
+        .status.success { display: block; color: var(--success-green); background: var(--success-light); border: 1px solid #b9e2bf; }
+
+        .actions {
+            margin-top: 16px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: 0;
+            border-radius: 10px;
+            padding: 11px 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all var(--ease);
+        }
+
+        .btn:hover:not(:disabled) { transform: translateY(-1px); }
+
+        @keyframes riseIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn.primary { color: #fff; background: linear-gradient(135deg, var(--primary-blue), var(--primary-blue-dark)); }
+        .btn.primary:disabled { opacity: .5; cursor: not-allowed; }
+        .btn.secondary { background: #fff; border: 1px solid var(--border-medium); color: #334155; text-decoration: none; }
+
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: 1fr; }
+            .topbar { flex-wrap: wrap; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <h1 class="logo">Neuro Nova</h1>
+        <nav class="nav">
+            <a href="{{ url_for('dashboard') }}">Overview</a>
+            <a href="{{ url_for('upload') }}">Upload</a>
+            <a href="{{ url_for('upload') }}">Result</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="card">
+            <h2>Upload Brain MRI for Analysis</h2>
+            <p class="sub">Drop an MRI image below or click to browse. Analysis starts only after valid file selection.</p>
+
+            {% if error %}
+            <div class="status error" style="display:block;">{{ error }}</div>
+            {% endif %}
+
+            <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                <label class="dropzone" id="dropzone" for="fileInput">
+                    <div class="drop-title">Drag & Drop MRI Image Here</div>
+                    <p class="drop-copy">or click to browse your file</p>
+                    <p class="formats">Supported: JPG, JPEG, PNG | Max file size: 50MB</p>
+                </label>
+                <input id="fileInput" name="file" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" required>
+
+                <div class="layout">
+                    <article class="panel">
+                        <h3>Preview</h3>
+                        <img id="preview" class="preview" alt="MRI preview">
+                        <div id="fileMeta" class="file-meta">No file selected.</div>
+                    </article>
+
+                    <article class="panel">
+                        <h3>Requirements Checklist</h3>
+                        <ul class="checklist">
+                            <li>Single MRI image file</li>
+                            <li>Image format must be JPG or PNG</li>
+                            <li>Maximum file size is 50MB</li>
+                            <li>Prefer clear axial/sagittal slices</li>
+                        </ul>
+                    </article>
+                </div>
+
+                <div class="progress-wrap" aria-label="Upload readiness progress">
+                    <div class="progress" id="progress"></div>
+                </div>
+
+                <div id="status" class="status"></div>
+
+                <div class="actions">
+                    <button id="analyzeBtn" class="btn primary" type="submit" disabled>Analyze Image</button>
+                    <a class="btn secondary" href="{{ url_for('dashboard') }}">Back to Overview</a>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const fileMeta = document.getElementById('fileMeta');
+        const progress = document.getElementById('progress');
+        const status = document.getElementById('status');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+
+        const maxBytes = 50 * 1024 * 1024;
+
+        function setStatus(text, kind) {
+            status.textContent = text;
+            status.className = 'status ' + kind;
+        }
+
+        function validate(file) {
+            const okType = ['image/jpeg', 'image/png'].includes(file.type);
+            if (!okType) return 'Only JPG and PNG are allowed.';
+            if (file.size > maxBytes) return 'File exceeds 50MB limit.';
+            return '';
+        }
+
+        function animateProgress(done = false) {
+            let p = 0;
+            const target = done ? 100 : 88;
+            const timer = setInterval(() => {
+                p += 4;
+                progress.style.width = Math.min(p, target) + '%';
+                if (p >= target) clearInterval(timer);
+            }, 18);
+        }
+
+        function handleFile(file) {
+            setStatus('', '');
+            progress.style.width = '0%';
+
+            const err = validate(file);
+            if (err) {
+                preview.style.display = 'none';
+                fileMeta.textContent = 'No valid file selected.';
+                analyzeBtn.disabled = true;
+                setStatus(err, 'error');
+                return;
+            }
+
+            const mb = (file.size / (1024 * 1024)).toFixed(2);
+            fileMeta.innerHTML = '<strong>Name:</strong> ' + file.name + '<br><strong>Type:</strong> ' + file.type + '<br><strong>Size:</strong> ' + mb + ' MB';
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+            analyzeBtn.disabled = false;
+            animateProgress();
+            setStatus('File validated successfully. Ready for analysis.', 'success');
+        }
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files[0]) handleFile(fileInput.files[0]);
+        });
+
+        ['dragenter', 'dragover'].forEach(evt => {
+            dropzone.addEventListener(evt, e => {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(evt => {
+            dropzone.addEventListener(evt, e => {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+            });
+        });
+
+        dropzone.addEventListener('drop', e => {
+            const file = e.dataTransfer.files[0];
+            if (!file) return;
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            fileInput.files = dt.files;
+            handleFile(file);
+        });
+
+        document.getElementById('uploadForm').addEventListener('submit', () => {
+            animateProgress(true);
+            analyzeBtn.textContent = 'Analyzing...';
+            analyzeBtn.disabled = true;
+        });
+    </script>
+</body>
+</html>
