@@ -245,7 +245,7 @@
         <nav class="nav">
             <a href="{{ url_for('dashboard') }}">Overview</a>
             <a href="{{ url_for('upload') }}">Upload</a>
-            <a href="{{ url_for('upload') }}">Result</a>
+            <a href="{{ request.path }}">Result</a>
             <a href="{{ url_for('logout') }}">Logout</a>
         </nav>
     </header>
@@ -271,7 +271,7 @@
 
             <aside class="score">
                 <h3>Prediction Strength</h3>
-                <div class="bar"><div class="fill" style="width: {{ conf_pct }}%;"></div></div>
+                <div class="bar"><div class="fill" data-width="{{ conf_pct }}"></div></div>
                 <p style="margin:10px 0 0; color:#475569; font-size:13px;">The model confidence for the predicted class is <strong>{{ conf_pct }}%</strong>.</p>
             </aside>
         </section>
@@ -298,15 +298,15 @@
                 <h3>Tumor Classification Probabilities</h3>
                 <div class="prob-row">
                     <div class="prob-label"><span>Glioma</span><span>{{ g|round(2) }}%</span></div>
-                    <div class="bar"><div class="fill" style="width: {{ g }}%;"></div></div>
+                    <div class="bar"><div class="fill" data-width="{{ g }}"></div></div>
                 </div>
                 <div class="prob-row">
                     <div class="prob-label"><span>Meningioma</span><span>{{ m|round(2) }}%</span></div>
-                    <div class="bar"><div class="fill" style="width: {{ m }}%;"></div></div>
+                    <div class="bar"><div class="fill" data-width="{{ m }}"></div></div>
                 </div>
                 <div class="prob-row">
                     <div class="prob-label"><span>Pituitary Adenoma</span><span>{{ p|round(2) }}%</span></div>
-                    <div class="bar"><div class="fill" style="width: {{ p }}%;"></div></div>
+                    <div class="bar"><div class="fill" data-width="{{ p }}"></div></div>
                 </div>
                 <p style="margin:8px 0 0; font-size:12px; color:#64748b;">Tumor subtype bars are displayed for result interpretation view.</p>
             </article>
@@ -341,13 +341,19 @@
         const elapsed = Math.max(1.2, ((now - navStart) / 1000));
         processingEl.textContent = elapsed.toFixed(1) + 's';
 
+        document.querySelectorAll('.fill[data-width]').forEach((el) => {
+            const val = Number(el.getAttribute('data-width'));
+            const safe = Number.isFinite(val) ? Math.max(0, Math.min(100, val)) : 0;
+            el.style.width = safe + '%';
+        });
+
         document.getElementById('downloadReportBtn').addEventListener('click', () => {
             const lines = [
                 'Neuro Nova MRI Analysis Report',
                 '--------------------------------',
                 'File: {{ result.filename }}',
                 'Predicted Class: {{ predicted }}',
-                'Tumor Detected: {{ 'YES' if tumor_detected else 'NO' }}',
+                "Tumor Detected: {{ 'YES' if tumor_detected else 'NO' }}",
                 'Confidence: {{ conf_pct }}%',
                 'Glioma Probability: {{ g|round(2) }}%',
                 'Meningioma Probability: {{ m|round(2) }}%',
