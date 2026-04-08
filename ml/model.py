@@ -17,6 +17,10 @@ SEGMENTATION_MODEL_PATH = os.path.join(BASE_DIR, "models", "unet_model.h5")
 SEGMENTATION_MODEL_ALT_PATH = os.path.join(BASE_DIR, "models", "unet_model.keras")
 CLASS_INDICES_PATH = os.path.join(BASE_DIR, "models", "class_indices.json")
 
+IS_RENDER = os.getenv("RENDER", "").lower() == "true"
+ENABLE_GRADCAM = os.getenv("ENABLE_GRADCAM", "0" if IS_RENDER else "1") == "1"
+ENABLE_SEGMENTATION = os.getenv("ENABLE_SEGMENTATION", "0" if IS_RENDER else "1") == "1"
+
 classification_model = None
 segmentation_model = None
 
@@ -80,7 +84,7 @@ def _ensure_models_loaded():
             CLASSIFICATION_MODEL_PATH,
             CLASSIFICATION_MODEL_ALT_PATH,
         )
-    if segmentation_model is None:
+    if ENABLE_SEGMENTATION and segmentation_model is None:
         segmentation_model = _load_model_if_available(
             SEGMENTATION_MODEL_PATH,
             SEGMENTATION_MODEL_ALT_PATH,
@@ -105,7 +109,7 @@ def predict_image(img_path):
 
     # Grad-CAM (fallback to pseudo heatmap when model is unavailable/fails).
     try:
-        if classification_model is not None:
+        if ENABLE_GRADCAM and classification_model is not None:
             heatmap_path = generate_gradcam(classification_model, img_batch, class_idx, img_path)
         else:
             heatmap_path = _fallback_image_path(img_path, "gradcam_")
@@ -114,7 +118,7 @@ def predict_image(img_path):
 
     # Segmentation (fallback to binary mask when model is unavailable/fails).
     try:
-        if segmentation_model is not None:
+        if ENABLE_SEGMENTATION and segmentation_model is not None:
             seg_path = generate_segmentation(segmentation_model, img_path)
         else:
             seg_path = _fallback_image_path(img_path, "seg_")
