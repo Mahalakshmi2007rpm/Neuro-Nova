@@ -1,10 +1,16 @@
 # app.py
 from flask import Flask, render_template, request, redirect, url_for, session
 import os
+import tempfile
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-change-me")
-UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "uploads")
+# Render and similar hosts reliably allow writes in the temp directory.
+UPLOAD_FOLDER = os.getenv(
+    "UPLOAD_FOLDER",
+    os.path.join(tempfile.gettempdir(), "neuro_nova_uploads"),
+)
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ---- Simple user database (demo) ----
@@ -58,15 +64,16 @@ def upload():
     error = None
     if request.method == 'POST':
         file = request.files.get('file')
-        if file:
-            filepath = os.path.join(UPLOAD_FOLDER, file.filename)
-            file.save(filepath)
+        if file and file.filename:
+            filename = secure_filename(file.filename)
             # Predict and generate Grad-CAM + segmentation
             try:
+                filepath = os.path.join(UPLOAD_FOLDER, filename)
+                file.save(filepath)
                 from ml.model import predict_image
                 pred_class, confidence, heatmap_path, seg_path = predict_image(filepath)
                 result = {
-                    "filename": file.filename,
+                    "filename": filename,
                     "pred_class": pred_class,
                     "confidence": confidence,
                     "heatmap": os.path.basename(heatmap_path),
@@ -75,6 +82,8 @@ def upload():
                 return render_template('result.html', result=result)
             except Exception as exc:
                 error = str(exc)
+        elif request.method == 'POST':
+            error = "Please select an image file before uploading."
     return render_template('upload.html', error=error)
     
 @app.route('/logout')
