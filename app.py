@@ -1,7 +1,6 @@
 # app.py
 from flask import Flask, render_template, request, redirect, url_for, session
 import os
-from ml.model import predict_image
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-change-me")
@@ -64,6 +63,7 @@ def upload():
             file.save(filepath)
             # Predict and generate Grad-CAM + segmentation
             try:
+                from ml.model import predict_image
                 pred_class, confidence, heatmap_path, seg_path = predict_image(filepath)
                 result = {
                     "filename": file.filename,
