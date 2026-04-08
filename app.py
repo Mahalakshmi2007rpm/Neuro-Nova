@@ -4,8 +4,8 @@ import os
 from ml.model import predict_image
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"  # Change this for production
-UPLOAD_FOLDER = "uploads"
+app.secret_key = os.getenv("SECRET_KEY", "dev-secret-change-me")
+UPLOAD_FOLDER = os.getenv("UPLOAD_FOLDER", "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # ---- Simple user database (demo) ----
@@ -84,4 +84,8 @@ def logout():
 
 # -------- Run App --------
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(
+        host='0.0.0.0',
+        port=int(os.getenv("PORT", 5000)),
+        debug=os.getenv("FLASK_DEBUG", "0") == "1",
+    )

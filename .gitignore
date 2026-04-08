@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+uploads/
+static/images/
+static/heatmaps/
+static/uploads/
