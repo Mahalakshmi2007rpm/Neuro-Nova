@@ -58,19 +58,23 @@ The repository includes generated examples in `static/images/`. These are the sa
 
 ### Grad-CAM Examples
 
-![Grad-CAM example 1](static/images/gradcam.jpg)
+![Grad-CAM example 1](static/images/gradcam_Te-gl_8.png)
 
-![Grad-CAM example 2](static/images/gradcam_Te-gl_44.jpg)
+![Grad-CAM example 2](static/images/gradcam_Te-no_148.png)
 
-![Grad-CAM example 3](static/images/gradcam_Te-me_41.jpg)
+![Grad-CAM example 3](static/images/gradcam_Te-pi_50.png)
+
+![Grad-CAM example 4](static/images/gradcam_Te-me_98.png)
 
 ### Segmentation Examples
 
-![Segmentation example 1](static/images/seg_gbm_bmc_0708_2.png)
+![Segmentation example 1](static/images/seg_Te-me_98.png)
 
-![Segmentation example 2](static/images/seg_Te-gl_44.jpg)
+![Segmentation example 2](static/images/seg_Te-gl_8.png)
 
-![Segmentation example 3](static/images/seg_Te-me_41.jpg)
+![Segmentation example 3](static/images/seg_Te-pi_9.png)
+
+![Segmentation example 3](static/images/seg_Tr-no_1.png)
 
 ## Notes
 
