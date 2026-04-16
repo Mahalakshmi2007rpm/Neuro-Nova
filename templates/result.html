@@ -341,12 +341,6 @@
         const elapsed = Math.max(1.2, ((now - navStart) / 1000));
         processingEl.textContent = elapsed.toFixed(1) + 's';
 
-        document.querySelectorAll('.fill[data-width]').forEach((el) => {
-            const val = Number(el.getAttribute('data-width'));
-            const safe = Number.isFinite(val) ? Math.max(0, Math.min(100, val)) : 0;
-            el.style.width = safe + '%';
-        });
-
         document.getElementById('downloadReportBtn').addEventListener('click', () => {
             const lines = [
                 'Neuro Nova MRI Analysis Report',
